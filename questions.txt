@@ -1,0 +1,61 @@
+TP3 - Réponses aux questions
+
+=== Activité 1 ===
+1. Rôle de l'attribut name : il donne le nom sous lequel la valeur du champ est envoyée au serveur
+   (clé dans $_GET ou $_POST). Sans name, le champ n'est pas envoyé.
+2. Chaque champ a un name différent pour être identifié séparément ; deux champs avec le même name
+   s'écraseraient.
+3. Le navigateur envoie une requête HTTP à la page indiquée par action (par défaut la page courante),
+   avec les valeurs des champs.
+4. Avec GET (méthode par défaut), l'URL devient par exemple :
+   formulaire.php?nom=Ali&prenom=Sami&age=21&formation=Informatique
+
+=== Activité 2 ===
+1-2. Les données apparaissent dans l'URL après le "?" sous la forme nom=valeur séparés par "&".
+3. Avec GET, les données sont ajoutées à l'URL (query string) ; elles sont donc visibles, dans
+   l'historique, les favoris et les journaux du serveur.
+4. Si on ouvre la page directement, $_GET['nom'] n'existe pas : PHP affiche un Warning
+   "Undefined array key". D'où l'utilisation de isset().
+
+=== Activité 4 : GET et POST ===
+GET                                  | POST
+Données dans l'URL                   | Données dans le corps de la requête
+Adapté aux recherches / consultation | Adapté à l'envoi, l'ajout, la modification de données
+URL partageable et mise en favori    | Données non visibles dans l'URL, pas de favori
+Taille limitée (longueur d'URL)      | Pas de limite pratique (fichiers, longs textes)
+Ne doit pas modifier de données      | Peut modifier l'état du serveur
+Rechargement sans risque             | Le rechargement renvoie le formulaire (confirmation)
+Données en clair dans les journaux   | Mieux adapté aux données sensibles (avec HTTPS)
+
+=== Activité 7 ===
+htmlspecialchars() transforme les caractères spéciaux HTML (<, >, &, ", ') en entités
+(&lt;, &gt;...). Avec la valeur <test>, le navigateur affiche le texte "<test>" au lieu de
+l'interpréter comme une balise. Cela évite de casser le HTML du formulaire et empêche les
+injections de code (faille XSS).
+
+=== Activité 12 ===
+GET est adapté à la recherche car c'est une simple consultation qui ne modifie aucune donnée.
+L'URL contient le terme recherché : on peut la partager, la mettre en favori, utiliser le
+bouton Précédent, et recharger la page sans risque.
+
+=== Activité 14 : Réflexion ===
+1. GET envoie les données dans l'URL, POST les envoie dans le corps de la requête HTTP.
+2. GET : recherche, filtre, pagination, consultation (opérations sans effet de bord).
+3. POST : ajout, modification, suppression, connexion, tout envoi qui change des données ou
+   contient des informations sensibles.
+4. Pour savoir si une donnée a été envoyée et éviter les erreurs "Undefined array key".
+   isset() vérifie l'existence (et non null) ; empty() considère aussi vide "", "0", 0, false,
+   donc attention avec une moyenne ou un âge égal à 0 (d'où les comparaisons avec '' dans le code).
+5. Pour garantir que les données sont correctes (champs remplis, âge et moyenne dans les
+   bonnes limites) avant de les traiter ou de les enregistrer.
+6. Parce que l'utilisateur peut modifier le formulaire (outils développeur), forger une requête
+   avec curl, ou envoyer des valeurs inattendues. La validation JavaScript/HTML (required, min,
+   max) n'est qu'un confort ; seule la validation côté serveur est fiable.
+7. htmlspecialchars() convertit les caractères spéciaux en entités HTML pour que les données
+   saisies soient affichées comme du texte et non exécutées comme du code (protection XSS).
+8. La validation vérifie que la donnée respecte les règles métier (format, longueur, bornes) ;
+   l'affichage sécurisé (échappement) protège le HTML au moment de la sortie. Une donnée valide
+   peut quand même contenir des caractères dangereux (par exemple un nom avec une apostrophe ou
+   des signes < >), donc les deux sont nécessaires.
+9. Pour éviter de dupliquer le code, réutiliser les mêmes fonctions dans plusieurs pages
+   (ajouter, modifier, rechercher), faciliter la maintenance et garder des pages plus lisibles.
